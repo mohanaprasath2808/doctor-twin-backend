@@ -1,0 +1,32 @@
+stages:
+  - lint
+  - build
+
+variables:
+  NODE_VERSION: '20'
+
+lint:
+  stage: lint
+  image: node:${NODE_VERSION}
+  script:
+    - npm ci
+    - npm run lint
+    - npm run lint:eslint
+  only:
+    - merge_requests
+    - main
+    - develop
+
+build:
+  stage: build
+  image: node:${NODE_VERSION}
+  script:
+    - npm ci
+    - npm run build
+  artifacts:
+    paths:
+      - dist/
+  only:
+    - merge_requests
+    - main
+    - develop
