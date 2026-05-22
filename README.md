@@ -7,7 +7,7 @@ Node.js + Express + TypeScript API with Prisma, Morgan, Winston, Joi validation,
 ```
 doctor-twin-backend/
 ├── prisma/
-│   └── schema.prisma          # Database schema (dude table)
+│   └── schema.prisma          # Database schema (doctor-twin table)
 ├── src/
 │   ├── index.ts               # Entry point
 │   ├── app.ts                 # Express app setup
@@ -47,13 +47,13 @@ Prisma connects via `DATABASE_URL` in `.env`:
 DATABASE_URL=postgresql://postgres:root@localhost:5432/dude
 ```
 
-| Script | Description |
-|--------|-------------|
-| `npm run db:migrate` | Apply migrations (dev, interactive) |
-| `npm run db:migrate:deploy` | Apply migrations (CI/production) |
-| `npm run db:push` | Push schema without migration files |
-| `npm run db:generate` | Regenerate Prisma client |
-| `npm run db:up` | Start MySQL via Docker |
+| Script                      | Description                         |
+| --------------------------- | ----------------------------------- |
+| `npm run db:migrate`        | Apply migrations (dev, interactive) |
+| `npm run db:migrate:deploy` | Apply migrations (CI/production)    |
+| `npm run db:push`           | Push schema without migration files |
+| `npm run db:generate`       | Regenerate Prisma client            |
+| `npm run db:up`             | Start MySQL via Docker              |
 
 Migrations live in `prisma/migrations/` (initial: `20260520164500_init_dude_table`).
 
@@ -73,9 +73,9 @@ Managed by Prisma model `Dude` → table `dude`.
 
 ### Users
 
-| Method | Endpoint |
-|--------|----------|
-| `GET` | `/api/v1/users` |
+| Method | Endpoint        |
+| ------ | --------------- |
+| `GET`  | `/api/v1/users` |
 | `POST` | `/api/v1/users` |
 
 ```json
@@ -88,20 +88,20 @@ Managed by Prisma model `Dude` → table `dude`.
 
 ## Scripts
 
-| Command | Description |
-|---------|-------------|
-| `npm run dev` | Dev server (hot reload) |
-| `npm run build` | Prisma generate + compile |
-| `npm start` | Run production build |
-| `npm run lint` | TypeScript check |
-| `npm run lint:eslint` | ESLint |
-| `npm run format` | Prettier |
+| Command               | Description               |
+| --------------------- | ------------------------- |
+| `npm run dev`         | Dev server (hot reload)   |
+| `npm run build`       | Prisma generate + compile |
+| `npm start`           | Run production build      |
+| `npm run lint`        | TypeScript check          |
+| `npm run lint:eslint` | ESLint                    |
+| `npm run format`      | Prettier                  |
 
 ## Environment
 
-| Variable | Default | Description |
-|----------|---------|-------------|
-| `NODE_ENV` | `development` | Environment |
-| `PORT` | `3000` | HTTP port |
-| `LOG_LEVEL` | `info` | Winston level |
-| `DATABASE_URL` | — | Set in `.env` (PostgreSQL connection string) |
+| Variable       | Default       | Description                                  |
+| -------------- | ------------- | -------------------------------------------- |
+| `NODE_ENV`     | `development` | Environment                                  |
+| `PORT`         | `3000`        | HTTP port                                    |
+| `LOG_LEVEL`    | `info`        | Winston level                                |
+| `DATABASE_URL` | —             | Set in `.env` (PostgreSQL connection string) |

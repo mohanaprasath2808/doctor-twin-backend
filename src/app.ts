@@ -15,6 +15,14 @@ export const createApp = (): Application => {
   app.use(httpLogger);
   app.use(logRequestMeta);
 
+  app.get('/health', (_req, res) => {
+    res.json({ status: 'ok' });
+  });
+
+  app.get('/api/v1/check', (_req, res) => {
+    res.send('<h1>Doctor Twin API is running</h1>');
+  });
+
   app.use('/api/v1', routes);
 
   app.use(notFoundHandler);
