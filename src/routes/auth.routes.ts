@@ -6,6 +6,7 @@ import {
   apiKeyCreateSchema,
   breakGlassSchema,
   changePasswordSchema,
+  createAppointmentSchema,
   createUserSchema,
   generateBackupCodeSchema,
   loginSchema,
@@ -26,11 +27,7 @@ import {
 
 const router = Router();
 
-const API_KEY_ROLES = new Set([
-  'physician',
-  'admin',
-  'workflow_coordinator',
-]);
+const API_KEY_ROLES = new Set(['physician', 'admin', 'workflow_coordinator']);
 
 const BREAK_GLASS_ROLES = new Set([
   'physician',
@@ -77,7 +74,12 @@ router.post(
 );
 
 router.get('/me', currentUser, authController.getMe);
-router.post('/set-pin', currentUser, validate(setPinSchema), authController.setPin);
+router.post(
+  '/set-pin',
+  currentUser,
+  validate(setPinSchema),
+  authController.setPin,
+);
 router.post(
   '/verify-pin',
   currentUser,
@@ -126,11 +128,7 @@ router.post(
   requireRole(new Set(['admin'])),
   authController.deactivateUser,
 );
-router.get(
-  '/api-keys',
-  requireRole(API_KEY_ROLES),
-  authController.listApiKeys,
-);
+router.get('/api-keys', requireRole(API_KEY_ROLES), authController.listApiKeys);
 router.post(
   '/api-keys',
   requireRole(API_KEY_ROLES),
@@ -147,6 +145,12 @@ router.post(
   requireRole(BREAK_GLASS_ROLES),
   validate(breakGlassSchema),
   authController.breakGlass,
+);
+router.post(
+  '/appointments',
+  currentUser,
+  validate(createAppointmentSchema),
+  authController.createAppointment,
 );
 
 export default router;

@@ -28,9 +28,10 @@ model User {
   backupCodes    Json?     @map("backup_codes")
   createdAt      DateTime  @default(now()) @map("created_at") @db.Timestamptz
   updatedAt      DateTime  @updatedAt @map("updated_at") @db.Timestamptz
-
+  
   authSessions AuthSession[]
   apiKeys      ApiKey[]
+  appointments Appointment[]
 
   @@map("users")
 }
@@ -121,4 +122,18 @@ model Otp {
   createdAt     DateTime @default(now()) @map("created_at") @db.Timestamptz
 
   @@map("otp")
+}
+
+model Appointment {
+  appointmentId String   @id @default(uuid()) @map("appointment_id") @db.VarChar(64)
+  patientId     String   @map("patient_id") @db.VarChar(64)
+  reason        String   @db.Text
+  insuranceName String?  @map("insurance_name") @db.VarChar(200)
+  providerName  String?  @map("provider_name") @db.VarChar(200)
+  createdAt     DateTime @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt     DateTime @updatedAt @map("updated_at") @db.Timestamptz
+
+  patient User @relation(fields: [patientId], references: [userId], onDelete: Cascade)
+
+  @@map("appointments")
 }

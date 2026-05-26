@@ -115,9 +115,7 @@ export const resetPassword = catchAsync(async (req: Request, res: Response) => {
 });
 
 export const logout = catchAsync(async (req: Request, res: Response) => {
-  await withTx((service) =>
-    service.revokeSession(req.auth?.session_id ?? ''),
-  );
+  await withTx((service) => service.revokeSession(req.auth?.session_id ?? ''));
   sendSuccess(res, { logged_out: true });
 });
 
@@ -128,10 +126,7 @@ export const getMe = catchAsync(async (req: Request, res: Response) => {
 });
 
 export const setPin = catchAsync(async (req: Request, res: Response) => {
-  if (
-    req.auth!.sub !== req.body.user_id &&
-    req.auth!.role !== 'admin'
-  ) {
+  if (req.auth!.sub !== req.body.user_id && req.auth!.role !== 'admin') {
     sendError(res, 403, 'Not allowed');
     return;
   }
@@ -262,9 +257,7 @@ export const mfaVerifySetup = catchAsync(
 
 export const mfaDisable = catchAsync(async (req: Request, res: Response) => {
   try {
-    await withTx((service) =>
-      service.disableMfa(req.auth!.sub, req.body.code),
-    );
+    await withTx((service) => service.disableMfa(req.auth!.sub, req.body.code));
     sendSuccess(res, { mfa_enabled: false });
   } catch (err) {
     handleAuthError(res, err);
@@ -327,6 +320,33 @@ export const patientVerifyOtp = catchAsync(
     try {
       const result = await withTx((service) =>
         service.verifyPatientOtp(req.body.phone, req.body.otp),
+      );
+      sendSuccess(res, result);
+    } catch (err) {
+      handleAuthError(res, err);
+    }
+  },
+);
+
+//PATIENT APPOINTMENT BOOKING
+export const createAppointment = catchAsync(
+  async (req: Request, res: Response) => {
+    if (!req.auth) {
+      sendError(res, 401, 'Not authenticated');
+      return;
+    }
+    if (req.auth.role !== 'patient') {
+      sendError(res, 403, 'Only patients can book appointments');
+      return;
+    }
+    try {
+      const result = await withTx((service) =>
+        service.bookAppointment(
+          req.auth!.sub,
+          req.body.reason,
+          req.body.insurance_name,
+          req.body.provider_name,
+        ),
       );
       sendSuccess(res, result);
     } catch (err) {

@@ -308,7 +308,9 @@ export class IdentityService {
 
     if (request.otp_type === 'backupcode') {
       if (!request.email) {
-        throw new AuthenticationError('email is required for backupcode verify');
+        throw new AuthenticationError(
+          'email is required for backupcode verify',
+        );
       }
       const user = await this.data.findUserByEmail(request.email);
       if (!user) throw new AuthenticationError('User not found');
@@ -424,7 +426,9 @@ export class IdentityService {
         'Refresh token has been revoked or already used',
       );
     }
-    const authSession = await this.data.getActiveAuthSession(payload.session_id);
+    const authSession = await this.data.getActiveAuthSession(
+      payload.session_id,
+    );
     if (!authSession) {
       throw new AuthenticationError('Session expired or revoked');
     }
@@ -575,7 +579,9 @@ export class IdentityService {
     for (const entry of codes) {
       if (entry.code === backupcode) {
         if (entry.isUsed) {
-          throw new AuthenticationError('This backup code has already been used');
+          throw new AuthenticationError(
+            'This backup code has already been used',
+          );
         }
         entry.isUsed = true;
         await this.data.updateUserById(user.userId, {
@@ -618,9 +624,7 @@ export class IdentityService {
       const newCount = user.failedAttempts + 1;
       let lockedUntil: Date | null = null;
       if (newCount >= PIN_MAX_ATTEMPTS) {
-        lockedUntil = new Date(
-          Date.now() + env.lockoutMinutes * 60_000,
-        );
+        lockedUntil = new Date(Date.now() + env.lockoutMinutes * 60_000);
       }
       await this.data.incrementUserFailedAttempts(user.userId, lockedUntil);
       if (newCount >= PIN_MAX_ATTEMPTS) {
@@ -705,7 +709,11 @@ export class IdentityService {
     const user = await this.data.findUserById(userId);
     if (!user) throw new Error('User not found');
     const secret = authenticator.generateSecret();
-    const provisioningUri = authenticator.keyuri(user.email, env.mfaIssuer, secret);
+    const provisioningUri = authenticator.keyuri(
+      user.email,
+      env.mfaIssuer,
+      secret,
+    );
     await this.data.updateUserById(userId, {
       mfaSecret: secret,
       mfaEnabled: false,
@@ -991,8 +999,9 @@ export class IdentityService {
   private async findPatientByPhone(phone: string): Promise<User | null> {
     const patients = await this.data.listUsersByRole('patient');
     return (
-      patients.find((u) => (u.metadata as UserMetadata | null)?.phone === phone) ??
-      null
+      patients.find(
+        (u) => (u.metadata as UserMetadata | null)?.phone === phone,
+      ) ?? null
     );
   }
 
@@ -1018,5 +1027,26 @@ export class IdentityService {
       return user;
     }
     throw new AuthenticationError('Unsupported role for OTP verification');
+  }
+
+  async bookAppointment(
+    patientId: string,
+    reason: string,
+    insuranceName: string,
+    providerName: string,
+  ) {
+    const patient = await this.data.findUserById(patientId);
+    if (!patient) {
+      throw new Error('Patient not found');
+    }
+    if (patient.role !== 'patient') {
+      throw new Error('User is not a patient');
+    }
+    return this.data.createAppointment({
+      patientId,
+      reason,
+      insuranceName,
+      providerName,
+    });
   }
 }
