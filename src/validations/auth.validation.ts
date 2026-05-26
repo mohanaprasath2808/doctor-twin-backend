@@ -178,9 +178,3 @@ export const patientOtpVerifySchema = Joi.object({
   phone: phone.required(),
   otp: Joi.string().length(6).required(),
 }).options({ stripUnknown: true });
-
-export const createAppointmentSchema = Joi.object({
-  reason: Joi.string().min(3).max(1000).required(),
-  insurance_name: Joi.string().min(1).max(200).required(),
-  provider_name: Joi.string().min(1).max(200).required(),
-}).options({ stripUnknown: true });

@@ -1,6 +1,5 @@
 import {
   ApiKey,
-  Appointment,
   AuthSession,
   Otp,
   PatientToken,
@@ -304,24 +303,6 @@ export class IdentityDb {
     await this.prisma.otp.update({
       where: { id: otpId },
       data: { used: true },
-    });
-  }
-
-  // ── Appointments ────────────────────────────────────────────────────────────
-
-  async createAppointment(data: {
-    patientId: string;
-    reason: string;
-    insuranceName: string;
-    providerName: string;
-  }): Promise<Appointment> {
-    return this.prisma.appointment.create({
-      data: {
-        patientId: data.patientId,
-        reason: data.reason,
-        insuranceName: data.insuranceName,
-        providerName: data.providerName,
-      },
     });
   }
 }

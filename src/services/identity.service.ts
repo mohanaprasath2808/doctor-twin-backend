@@ -1028,25 +1028,4 @@ export class IdentityService {
     }
     throw new AuthenticationError('Unsupported role for OTP verification');
   }
-
-  async bookAppointment(
-    patientId: string,
-    reason: string,
-    insuranceName: string,
-    providerName: string,
-  ) {
-    const patient = await this.data.findUserById(patientId);
-    if (!patient) {
-      throw new Error('Patient not found');
-    }
-    if (patient.role !== 'patient') {
-      throw new Error('User is not a patient');
-    }
-    return this.data.createAppointment({
-      patientId,
-      reason,
-      insuranceName,
-      providerName,
-    });
-  }
 }

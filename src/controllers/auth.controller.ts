@@ -328,31 +328,4 @@ export const patientVerifyOtp = catchAsync(
   },
 );
 
-//PATIENT APPOINTMENT BOOKING
-export const createAppointment = catchAsync(
-  async (req: Request, res: Response) => {
-    if (!req.auth) {
-      sendError(res, 401, 'Not authenticated');
-      return;
-    }
-    if (req.auth.role !== 'patient') {
-      sendError(res, 403, 'Only patients can book appointments');
-      return;
-    }
-    try {
-      const result = await withTx((service) =>
-        service.bookAppointment(
-          req.auth!.sub,
-          req.body.reason,
-          req.body.insurance_name,
-          req.body.provider_name,
-        ),
-      );
-      sendSuccess(res, result);
-    } catch (err) {
-      handleAuthError(res, err);
-    }
-  },
-);
-
 export { ALL_STAFF_ROLES };
