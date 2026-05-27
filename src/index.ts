@@ -1,3 +1,4 @@
+import './types/express';
 import { createApp } from './app';
 import prisma from './client';
 import { env } from './config/env';
@@ -37,6 +38,9 @@ process.on('unhandledRejection', (reason) => {
 });
 
 process.on('uncaughtException', (err) => {
-  logger.error('Uncaught exception', { message: err.message, stack: err.stack });
+  logger.error('Uncaught exception', {
+    message: err.message,
+    stack: err.stack,
+  });
   process.exit(1);
 });
