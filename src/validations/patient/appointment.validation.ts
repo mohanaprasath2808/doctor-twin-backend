@@ -1,5 +1,14 @@
 import Joi from 'joi';
-import { APPOINTMENT_STEPS } from '../../constants/patient/appointment.constants';
+import {
+  APPOINTMENT_STATUSES,
+  APPOINTMENT_STEPS,
+} from '../../constants/patient/appointment.constants';
+
+export const listAppointmentsSchema = Joi.object({
+  status: Joi.string()
+    .valid(...APPOINTMENT_STATUSES)
+    .optional(),
+}).options({ stripUnknown: true });
 
 const timeSlotPattern = /^(0?[1-9]|1[0-2]):[0-5]\d\s?(AM|PM)$/i;
 

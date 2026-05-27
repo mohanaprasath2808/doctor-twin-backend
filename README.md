@@ -82,10 +82,6 @@ Managed by Prisma model `Dude` → table `dude`.
 { "name": "Jane Doe", "email": "jane@example.com", "password": "secret12" }
 ```
 
-### Health
-
-`GET /api/v1/health`
-
 ## Scripts
 
 | Command               | Description               |

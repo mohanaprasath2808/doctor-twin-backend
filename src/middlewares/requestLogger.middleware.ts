@@ -9,12 +9,9 @@ const stream = {
   },
 };
 
-const skipHealth = (req: Request) => req.path === '/api/v1/health';
-
-export const httpLogger = morgan(
-  env.isProduction ? 'combined' : 'dev',
-  { stream, skip: skipHealth },
-);
+export const httpLogger = morgan(env.isProduction ? 'combined' : 'dev', {
+  stream,
+});
 
 export const logRequestMeta = (
   req: Request,

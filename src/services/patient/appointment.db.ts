@@ -11,8 +11,22 @@ export class AppointmentDb {
   async findAppointmentById(
     appointmentId: string,
   ): Promise<Appointments | null> {
-    return this.prisma.appointments.findUnique({
-      where: { appointmentId },
+    return this.prisma.appointments.findFirst({
+      where: { appointmentId, deleted: false },
+    });
+  }
+
+  async findAppointmentsByPatientId(
+    patientId: string,
+    filters?: { status?: string },
+  ): Promise<Appointments[]> {
+    return this.prisma.appointments.findMany({
+      where: {
+        patientId,
+        deleted: false,
+        ...(filters?.status ? { status: filters.status } : {}),
+      },
+      orderBy: { createdAt: 'desc' },
     });
   }
 

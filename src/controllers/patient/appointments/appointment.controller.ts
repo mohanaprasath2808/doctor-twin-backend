@@ -67,14 +67,7 @@ const buildStepPayload = (body: Request['body']): SaveAppointmentStepPayload => 
 
 export const createAppointment = catchAsync(
   async (req: Request, res: Response) => {
-    if (!req.auth) {
-      sendError(res, 401, 'Not authenticated');
-      return;
-    }
-    if (req.auth.role !== 'patient') {
-      sendError(res, 403, 'Only patients can book appointments');
-      return;
-    }
+    if (!assertPatientAuth(req, res)) return;
     try {
       const payload = buildStepPayload(req.body);
       const result = await withTx((service) =>
@@ -82,6 +75,49 @@ export const createAppointment = catchAsync(
       );
       const status = payload.step === 1 ? 201 : 200;
       sendSuccess(res, result, status);
+    } catch (err) {
+      handleAppointmentError(res, err);
+    }
+  },
+);
+
+const assertPatientAuth = (req: Request, res: Response): boolean => {
+  if (!req.auth) {
+    sendError(res, 401, 'Not authenticated');
+    return false;
+  }
+  if (req.auth.role !== 'patient') {
+    sendError(res, 403, 'Only patients can access appointments');
+    return false;
+  }
+  return true;
+};
+
+export const listAppointments = catchAsync(
+  async (req: Request, res: Response) => {
+    if (!assertPatientAuth(req, res)) return;
+    try {
+      const result = await withTx((service) =>
+        service.listAppointments(req.auth!.sub, req.body),
+      );
+      sendSuccess(res, { appointments: result });
+    } catch (err) {
+      handleAppointmentError(res, err);
+    }
+  },
+);
+
+export const getAppointment = catchAsync(
+  async (req: Request, res: Response) => {
+    if (!assertPatientAuth(req, res)) return;
+    try {
+      const result = await withTx((service) =>
+        service.getAppointment(
+          req.auth!.sub,
+          req.params.appointment_id as string,
+        ),
+      );
+      sendSuccess(res, result);
     } catch (err) {
       handleAppointmentError(res, err);
     }

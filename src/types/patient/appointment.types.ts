@@ -12,8 +12,13 @@ export type AppointmentResponse = {
   appointment_type: string | null;
   appointment_date: string | null;
   time_slot: string | null;
+  deleted: boolean;
   created_at: Date;
   updated_at: Date;
+};
+
+export type ListAppointmentsPayload = {
+  status?: AppointmentStatus;
 };
 
 export type AppointmentScheduledResponse = AppointmentResponse & {

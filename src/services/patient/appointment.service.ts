@@ -5,6 +5,7 @@ import { AppointmentFlowError } from '../../errors/patient/AppointmentFlowError'
 import {
   AppointmentResponse,
   AppointmentScheduledResponse,
+  ListAppointmentsPayload,
   SaveAppointmentStepPayload,
 } from '../../types/patient/appointment.types';
 import { UserMetadata } from '../../types/identity.types';
@@ -56,6 +57,7 @@ const toAppointmentResponse = (
     ? toDateOnlyString(appointment.appointmentDate)
     : null,
   time_slot: appointment.timeSlot,
+  deleted: appointment.deleted,
   created_at: appointment.createdAt,
   updated_at: appointment.updatedAt,
 });
@@ -81,6 +83,9 @@ export class AppointmentService {
   }
 
   private assertEditable(appointment: Appointments): void {
+    if (appointment.deleted) {
+      throw new AppointmentFlowError('Appointment not found');
+    }
     if (appointment.status === 'Cancelled') {
       throw new AppointmentFlowError('Appointment has been cancelled');
     }
@@ -204,5 +209,29 @@ export class AppointmentService {
     });
 
     return toAppointmentResponse(updated);
+  }
+
+  async listAppointments(
+    patientId: string,
+    filters?: ListAppointmentsPayload,
+  ): Promise<AppointmentResponse[]> {
+    await this.assertActivePatient(patientId);
+    const appointments = await this.data.findAppointmentsByPatientId(
+      patientId,
+      filters?.status ? { status: filters.status } : undefined,
+    );
+    return appointments.map(toAppointmentResponse);
+  }
+
+  async getAppointment(
+    patientId: string,
+    appointmentId: string,
+  ): Promise<AppointmentResponse> {
+    await this.assertActivePatient(patientId);
+    const appointment = await this.getPatientAppointment(
+      appointmentId,
+      patientId,
+    );
+    return toAppointmentResponse(appointment);
   }
 }

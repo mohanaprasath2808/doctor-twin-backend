@@ -135,6 +135,7 @@ model Appointments {
   appointmentDate DateTime? @map("appointment_date") @db.Date
   timeSlot        String?   @map("time_slot") @db.VarChar(32)
   status          String    @default("Pending") @db.VarChar(32)
+  deleted         Boolean   @default(false)
   createdAt       DateTime  @default(now()) @map("created_at") @db.Timestamptz
   updatedAt       DateTime  @updatedAt @map("updated_at") @db.Timestamptz
 
