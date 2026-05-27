@@ -31,7 +31,7 @@ model User {
   
   authSessions AuthSession[]
   apiKeys      ApiKey[]
-  appointments Appointment[]
+  appointments Appointments[]
 
   @@map("users")
 }
@@ -124,14 +124,20 @@ model Otp {
   @@map("otp")
 }
 
-model Appointment {
-  appointmentId String   @id @default(uuid()) @map("appointment_id") @db.VarChar(64)
-  patientId     String   @map("patient_id") @db.VarChar(64)
-  reason        String   @db.Text
-  insuranceName String?  @map("insurance_name") @db.VarChar(200)
-  providerName  String?  @map("provider_name") @db.VarChar(200)
-  createdAt     DateTime @default(now()) @map("created_at") @db.Timestamptz
-  updatedAt     DateTime @updatedAt @map("updated_at") @db.Timestamptz
+model Appointments {
+  appointmentId   String    @id @default(uuid()) @map("appointment_id") @db.VarChar(64)
+  patientId       String    @map("patient_id") @db.VarChar(64)
+  reason          String?   @db.Text
+  insuranceName   String?   @map("insurance_name") @db.VarChar(200)
+  providerName    String?   @map("provider_name") @db.VarChar(200)
+  category        String?   @db.VarChar(200)
+  appointmentType String?   @map("appointment_type") @db.VarChar(200)
+  appointmentDate DateTime? @map("appointment_date") @db.Date
+  timeSlot        String?   @map("time_slot") @db.VarChar(32)
+  status          String    @default("Pending") @db.VarChar(32)
+  deleted         Boolean   @default(false)
+  createdAt       DateTime  @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt       DateTime  @updatedAt @map("updated_at") @db.Timestamptz
 
   patient User @relation(fields: [patientId], references: [userId], onDelete: Cascade)
 

@@ -114,6 +114,24 @@ CREATE TABLE "otp" (
     CONSTRAINT "otp_pkey" PRIMARY KEY ("id")
 );
 
+-- CreateTable
+CREATE TABLE "appointments" (
+    "appointment_id" VARCHAR(64) NOT NULL,
+    "patient_id" VARCHAR(64) NOT NULL,
+    "reason" TEXT,
+    "insurance_name" VARCHAR(200),
+    "provider_name" VARCHAR(200),
+    "category" VARCHAR(200),
+    "appointment_type" VARCHAR(200),
+    "appointment_date" DATE,
+    "time_slot" VARCHAR(32),
+    "status" VARCHAR(32) NOT NULL DEFAULT 'Pending',
+    "created_at" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMPTZ NOT NULL,
+
+    CONSTRAINT "appointments_pkey" PRIMARY KEY ("appointment_id")
+);
+
 -- CreateIndex
 CREATE UNIQUE INDEX "users_email_key" ON "users"("email");
 
@@ -131,3 +149,6 @@ ALTER TABLE "auth_sessions" ADD CONSTRAINT "auth_sessions_user_id_fkey" FOREIGN 
 
 -- AddForeignKey
 ALTER TABLE "api_keys" ADD CONSTRAINT "api_keys_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("user_id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "appointments" ADD CONSTRAINT "appointments_patient_id_fkey" FOREIGN KEY ("patient_id") REFERENCES "users"("user_id") ON DELETE CASCADE ON UPDATE CASCADE;

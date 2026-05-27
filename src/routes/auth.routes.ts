@@ -6,7 +6,6 @@ import {
   apiKeyCreateSchema,
   breakGlassSchema,
   changePasswordSchema,
-  createAppointmentSchema,
   createUserSchema,
   generateBackupCodeSchema,
   loginSchema,
@@ -145,12 +144,6 @@ router.post(
   requireRole(BREAK_GLASS_ROLES),
   validate(breakGlassSchema),
   authController.breakGlass,
-);
-router.post(
-  '/appointments',
-  currentUser,
-  validate(createAppointmentSchema),
-  authController.createAppointment,
 );
 
 export default router;
